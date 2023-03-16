@@ -28,6 +28,9 @@ from pathlib import Path
 
 import xdg
 
+import cloudguard.region
+import cloudguard.typing as cgty
+
 from cloudguard.errors import ConfigParseError
 
 
@@ -37,6 +40,8 @@ log = logging.getLogger(__name__)
 #: Name of the environment variable providing the path to CloudGuard's
 #: configuration.
 ENV_CLOUDGUARD_CONFIG: str = "CLOUDGUARD_CONFIG"
+#: Name of the environment variable providing the CloudGuard region.
+ENV_CLOUDGUARD_REGION: str = "CLOUDGUARD_REGION"
 
 #: Name of the directory holding CloudGuard's configuration.
 CLOUDGUARD_CONFIG_DIR_NAME: str = "cloudguard"
@@ -48,7 +53,17 @@ CLOUDGUARD_CONFIG_PATH: Path = (
 
 @dc.dataclass(init=False, repr=False)
 class Config(object):
-    """Configuration of the CloudGuard client."""
+    """Configuration of the CloudGuard client.
+
+
+    :param region: The region to use when instantiating the client.
+    :type region: ~typing.Union[str, ~cloudguard.region.CloudGuardRegion]
+
+    """
+
+    __region: ty.Optional[cloudguard.region.CloudGuardRegion] = dc.field(
+        default=None, init=False, metadata={"name": "region"}
+    )
 
     def __init__(self, **kwargs):
         """Constructor for :class:`cloudguard.config.Config`."""
@@ -109,6 +124,9 @@ class Config(object):
 
         """
         self = cls()
+        if (region := os.environ.get(ENV_CLOUDGUARD_REGION)) is not None:
+            self.region = region
+
         return self
 
     @classmethod
@@ -145,6 +163,46 @@ class Config(object):
         self.update(raw.get("default") or {})
 
         return self
+
+    @property
+    def region(self) -> ty.Optional[cloudguard.region.CloudGuardRegion]:
+        """Get the CloudGuard region.
+
+
+        :return: The CloudGuard region.
+        :rtype: ~cloudguard.region.CloudGuardRegion
+
+        """
+        return self.__region
+
+    @region.setter
+    def region(self, value: cgty.CloudGuardRegion) -> None:
+        """Set the region to use when instantiating the client.
+
+
+        :param value: The CloudGuard region.
+        :type value: ~typing.Union[str, ~cloudguard.region.CloudGuardRegion]
+
+
+        :raise TypeError: When the provided region is none of the accepted
+                          types.
+
+        :raise ValueError: When the provided region is not one of the known
+                           regions.
+
+        """
+        if value is None or isinstance(value, cloudguard.region.CloudGuardRegion):
+            self.__region = value
+        elif isinstance(value, str):
+            try:
+                self.__region = getattr(cloudguard.region, value)
+            except AttributeError:
+                raise ValueError(f"unknown region: {value}") from None
+        else:
+            raise TypeError(
+                f"expected `{str!r}` or `{cloudguard.region.CloudGuardRegion!r}`"
+                f" got: {type(value)}"
+            )
 
     def update(self, other: ty.Union["Config", ty.Mapping[str, ty.Any]]) -> None:
         """Update the configuration from another configuration object or any

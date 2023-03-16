@@ -18,7 +18,12 @@
 # You should have received a copy of the MIT License along with *cloudguard*.
 # If not, see <http://opensource.org/licenses/MIT>.
 #
+import typing as ty
+
+import cloudguard.typing as cgty
+
 from cloudguard.config import Config
+from cloudguard.region import CloudGuardRegion
 
 
 class Session(object):
@@ -30,6 +35,35 @@ class Session(object):
     def __init__(self, *args, **kwargs):
         """Constructor for :class:`cloudguard.session.Session`."""
         self.config = Config.load()
+
+    @property
+    def region(self) -> ty.Optional[CloudGuardRegion]:
+        """Get the CloudGuard region.
+
+
+        :return: The CloudGuard region.
+        :rtype: ~cloudguard.region.CloudGuardRegion
+
+        """
+        return self.config.region
+
+    @region.setter
+    def region(self, value: cgty.CloudGuardRegion) -> None:
+        """Set the region to use when instantiating the client.
+
+
+        :param value: The CloudGuard region.
+        :type value: ~typing.Union[str, ~cloudguard.region.CloudGuardRegion]
+
+
+        :raise TypeError: When the provided region is none of the accepted
+                          types.
+
+        :raise ValueError: When the provided region is not one of the known
+                           regions.
+
+        """
+        self.config.region = value
 
 
 class AsyncSession(Session):
