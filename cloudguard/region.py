@@ -31,3 +31,59 @@ class CloudGuardRegion(object):
     code: str
     #: URL to access the CloudGuard API.
     api: str
+
+
+#: CloudGuard region, Australia (``ap2``).
+Australia = CloudGuardRegion(
+    name="Australia",
+    code="ap2",
+    api="https://api.ap2.dome9.com/",
+)
+
+#: CloudGuard region, Canada (``cace1``).
+Canada = CloudGuardRegion(
+    name="Canada",
+    code="cace1",
+    api="https://api.cace1.dome9.com/",
+)
+
+#: CloudGuard region, India (``ap3``).
+India = CloudGuardRegion(
+    name="India",
+    code="ap3",
+    api="https://api.ap3.dome9.com/",
+)
+
+#: CloudGuard region, Ireland (``eu1``).
+Ireland = CloudGuardRegion(
+    name="Ireland",
+    code="eu1",
+    api="https://api.eu1.dome9.com/",
+)
+
+#: CloudGuard region, Singapore (``ap1``).
+Singapore = CloudGuardRegion(
+    name="Singapore",
+    code="ap1",
+    api="https://api.ap1.dome9.com/",
+)
+
+#: CloudGuard region, United States (``us``).
+UnitedStates = CloudGuardRegion(
+    name="United States",
+    code="us",
+    api="https://api.dome9.com/",
+)
+
+#: Alias to the Singapore CloudGuard region.
+ap1 = Singapore
+#: Alias to the Australia CloudGuard region.
+ap2 = Australia
+#: Alias to the India CloudGuard region.
+ap3 = India
+#: Alias to the Canada CloudGuard region.
+cace1 = Canada
+#: Alias to the Ireland CloudGuard region.
+eu1 = Ireland
+#: Alias to the United States CloudGuard region.
+us = UnitedStates
