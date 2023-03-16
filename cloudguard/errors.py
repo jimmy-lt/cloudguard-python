@@ -1,5 +1,5 @@
-# cloudguard/session.py
-# =====================
+# cloudguard/errors.py
+# ====================
 #
 # Copying
 # -------
@@ -18,21 +18,22 @@
 # You should have received a copy of the MIT License along with *cloudguard*.
 # If not, see <http://opensource.org/licenses/MIT>.
 #
-from cloudguard.config import Config
+class CloudGuardError(Exception):
+    """Base exception class for CloudGuard errors."""
+
+    fmt = "An unspecified error occurred."
+
+    def __init__(self, **kwargs):
+        super().__init__(self.fmt.format(**kwargs))
 
 
-class Session(object):
-    """The session consolidates in a single place everything required to
-    communicate with the CloudGuard API.
+class CloudGuardIOError(CloudGuardError, IOError):
+    """Base exception for input/output errors."""
 
-    """
-
-    def __init__(self, *args, **kwargs):
-        """Constructor for :class:`cloudguard.session.Session`."""
-        self.config = Config.load()
+    fmt = "An unspecified I/O error occurred."
 
 
-class AsyncSession(Session):
-    """The asynchronous session is to be used in a concurrent runtime."""
+class ConfigParseError(CloudGuardIOError):
+    """The configuration file could not be parsed."""
 
-    pass
+    fmt = "Unable to parse configuration file: {path}"
