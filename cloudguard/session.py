@@ -20,6 +20,7 @@
 #
 import typing as ty
 
+import cloudguard.client
 import cloudguard.typing as cgty
 
 from cloudguard.config import Config
@@ -34,7 +35,13 @@ class Session(object):
 
     def __init__(self, *args, **kwargs):
         """Constructor for :class:`cloudguard.session.Session`."""
+        self.client: ty.Optional[cgty.APIClient] = None
         self.config = Config.load()
+
+    def __enter__(self) -> cloudguard.client.APIClient:
+        """Initiate the client's context."""
+        self.client = cloudguard.client.APIClient(self.config).__enter__()
+        return self.client
 
     @property
     def region(self) -> ty.Optional[CloudGuardRegion]:
@@ -69,4 +76,9 @@ class Session(object):
 class AsyncSession(Session):
     """The asynchronous session is to be used in a concurrent runtime."""
 
-    pass
+    __enter__ = None
+
+    async def __aenter__(self) -> cloudguard.client.AsyncAPIClient:
+        """Initiate the asynchronous client's context."""
+        self.client = await cloudguard.client.AsyncAPIClient(self.config).__aenter__()
+        return self.client

@@ -20,8 +20,15 @@
 #
 import typing as ty
 
+import cloudguard.client
 import cloudguard.region
 
+
+#: Type definition for a CloudGuard API client.
+APIClient = ty.Union[
+    cloudguard.client.APIClient,
+    cloudguard.client.AsyncAPIClient,
+]
 
 #: Type definition for a user provided
 #: :class:`CloudGuard region <cloudguard.region.CloudGuardRegion>`.
