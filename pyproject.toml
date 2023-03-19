@@ -73,6 +73,8 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
+xdg = "^6.0.0"
+httpx = "^0.23.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.0.0"
